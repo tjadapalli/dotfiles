@@ -1,0 +1,2 @@
+#!/bin/sh
+stow -D -d .. -t ~ dotfiles
