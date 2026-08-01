@@ -1,0 +1,26 @@
+#!/bin/sh
+# Points system zsh at $XDG_CONFIG_HOME/zsh by writing to /etc/zsh/zshenv.
+# Safe to re-run: skips if the block is already present.
+
+BLOCK='if [[ -z "$XDG_CONFIG_HOME" ]]
+then
+    export XDG_CONFIG_HOME="$HOME/.config"
+fi
+
+if [[ -d "$XDG_CONFIG_HOME/zsh" ]]
+then
+    export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+fi'
+
+TARGET=/etc/zsh/zshenv
+
+mkdir -p ~/.local/state/zsh   # history
+mkdir -p ~/.cache/zsh         # completion cache
+
+if [ -f "$TARGET" ] && grep -q 'ZDOTDIR="\$XDG_CONFIG_HOME/zsh"' "$TARGET"; then
+    echo "$TARGET already configured, skipping."
+    exit 0
+fi
+
+printf '%s\n' "$BLOCK" | sudo tee -a "$TARGET" > /dev/null
+echo "Appended XDG/ZDOTDIR block to $TARGET"
