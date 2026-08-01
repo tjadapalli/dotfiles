@@ -1,14 +1,24 @@
-# Better ls
-alias ls='eza --icons'
+# Better ls (icons toggle: `disable-icons` / `enable-icons`, default enabled)
+typeset -g EZA_ICONS_ENABLED=1
 
-# Detailed listing
-alias ll='eza -lh --icons --git'
+_eza_icon_flag() {
+    (( EZA_ICONS_ENABLED )) && print -- --icons
+}
 
-# Detailed listing including hidden files
-alias la='eza -lah --icons --git'
+disable-icons() {
+    EZA_ICONS_ENABLED=0
+    echo "eza icons disabled"
+}
 
-# Tree view
-alias tree='eza --tree --icons'
+enable-icons() {
+    EZA_ICONS_ENABLED=1
+    echo "eza icons enabled"
+}
+
+ls() { eza $(_eza_icon_flag) "$@" }
+ll() { eza -lh $(_eza_icon_flag) --git "$@" }
+la() { eza -lah $(_eza_icon_flag) --git "$@" }
+tree() { eza --tree $(_eza_icon_flag) "$@" }
 
 # Reuse ls completions for eza (avoids defining a separate completion function)
 compdef eza=ls
