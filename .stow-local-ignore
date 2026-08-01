@@ -1,2 +1,7 @@
 create-stow
 remove-stow
+setup-zshenv
+README\.md
+\.gitignore
+\.stow-local-ignore
+\.git
