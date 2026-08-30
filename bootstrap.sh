@@ -2,9 +2,8 @@
 # Full bootstrap for a fresh Ubuntu (server) machine.
 #
 # Idempotent: safe to re-run. Installs everything this dotfiles repo needs
-# (per README.md), plus build tooling required by Neovim/Mason (this is what
-# fixes the "python3 failed" error when Mason tries to install `black`),
-# the Tmux Plugin Manager, and a recent Neovim build.
+# (per README.md), plus build tooling required by Neovim/Mason, the Tmux
+# Plugin Manager, and the pinned Neovim build (version in .nvim-version).
 #
 # Usage:
 #   ./bootstrap.sh              # full install
@@ -121,15 +120,19 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # ---------------------------------------------------------------------------
 # 4. Neovim — Ubuntu's apt package is often too old for modern plugins
-#    (treesitter/lazy.nvim expect a recent release), so grab the latest
-#    stable prebuilt binary from GitHub instead.
+#    (treesitter/lazy.nvim expect a recent release), so grab a pinned
+#    stable prebuilt binary from GitHub instead. The version this config
+#    targets lives in .nvim-version (single source of truth — bump that
+#    file to upgrade).
 # ---------------------------------------------------------------------------
+NVIM_VERSION="$(tr -d '[:space:]' < "$SCRIPT_DIR/.nvim-version")"
+
 install_neovim() {
-    if command -v nvim >/dev/null 2>&1; then
-        log "Neovim already installed ($(nvim --version | head -1)), skipping"
+    if command -v nvim >/dev/null 2>&1 && nvim --version | head -1 | grep -qF "NVIM v${NVIM_VERSION}"; then
+        log "Neovim v${NVIM_VERSION} already installed, skipping"
         return
     fi
-    log "Installing latest stable Neovim"
+    log "Installing Neovim v${NVIM_VERSION}"
     local arch asset tmpdir
     arch="$(uname -m)"
     case "$arch" in
@@ -138,17 +141,13 @@ install_neovim() {
         *) warn "Unsupported arch '$arch' for prebuilt Neovim, falling back to apt"; $SUDO apt-get install -y neovim; return ;;
     esac
     tmpdir="$(mktemp -d)"
-    # Newer Neovim releases use nvim-linux-<arch>.tar.gz; older ones used
-    # nvim-linux64.tar.gz. Try current naming first, fall back if missing.
-    if ! curl -sSfL -o "$tmpdir/nvim.tar.gz" \
-        "https://github.com/neovim/neovim/releases/latest/download/${asset}"; then
-        curl -sSfL -o "$tmpdir/nvim.tar.gz" \
-            "https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz"
-    fi
-    $SUDO rm -rf /opt/nvim
-    $SUDO mkdir -p /opt/nvim
-    $SUDO tar -C /opt/nvim --strip-components=1 -xzf "$tmpdir/nvim.tar.gz"
-    $SUDO ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim
+    curl -sSfL -o "$tmpdir/nvim.tar.gz" \
+        "https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/${asset}"
+    rm -rf "$HOME/.local/nvim"
+    mkdir -p "$HOME/.local/nvim"
+    tar -C "$HOME/.local/nvim" --strip-components=1 -xzf "$tmpdir/nvim.tar.gz"
+    mkdir -p "$HOME/.local/bin"
+    ln -sf "$HOME/.local/nvim/bin/nvim" "$HOME/.local/bin/nvim"
     rm -rf "$tmpdir"
 }
 install_neovim
