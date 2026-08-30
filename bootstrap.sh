@@ -39,28 +39,18 @@ $SUDO apt-get update -y
 
 # build-essential + python3-venv/pip are what Mason needs to build/install
 # LSPs and formatters (e.g. the "black" install failure: python3 -m venv
-# fails without python3-venv on Debian/Ubuntu). nodejs/npm cover the JS/TS
-# based tools Mason also installs.
+# fails without python3-venv on Debian/Ubuntu) and what nvim-treesitter needs
+# to compile parsers. xclip backs tmux-yank's system-clipboard integration.
 $SUDO apt-get install -y --no-install-recommends \
     build-essential \
     git \
     curl \
-    wget \
-    ca-certificates \
-    gnupg \
-    unzip \
-    tar \
-    gzip \
-    xz-utils \
     stow \
     zsh \
     tmux \
     python3 \
     python3-venv \
     python3-pip \
-    pipx \
-    nodejs \
-    npm \
     eza \
     bat \
     fd-find \
@@ -153,26 +143,7 @@ install_neovim() {
 install_neovim
 
 # ---------------------------------------------------------------------------
-# 5. Node via nvm (.config/zsh/.zshrc expects $HOME/.nvm) — gives Mason a
-#    working npm for JS/TS-based servers alongside the apt nodejs above.
-# ---------------------------------------------------------------------------
-# Best-effort: the apt `nodejs`/`npm` installed above already cover Mason's
-# JS/TS-based servers, so a hiccup here (registry unreachable, etc.) shouldn't
-# take down the rest of the bootstrap.
-if [ ! -d "$HOME/.nvm" ]; then
-    log "Installing nvm + Node LTS"
-    if curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash; then
-        export NVM_DIR="$HOME/.nvm"
-        # shellcheck disable=SC1091
-        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-        nvm install --lts || warn "nvm couldn't install a Node LTS build (network?); the apt nodejs/npm from step 1 still work"
-    else
-        warn "nvm install script failed; the apt nodejs/npm from step 1 still work"
-    fi
-fi
-
-# ---------------------------------------------------------------------------
-# 6. Stow the dotfiles themselves
+# 5. Stow the dotfiles themselves
 # ---------------------------------------------------------------------------
 log "Stowing dotfiles (--no-folding)"
 # GNU Stow silently no-ops (exit 0, "skipping target which was current stow
@@ -197,13 +168,13 @@ if [ ! -e "$HOME/.config/nvim/init.lua" ] && [ -e "$SCRIPT_DIR/.config/nvim/init
 fi
 
 # ---------------------------------------------------------------------------
-# 7. Point zsh at $XDG_CONFIG_HOME/zsh
+# 6. Point zsh at $XDG_CONFIG_HOME/zsh
 # ---------------------------------------------------------------------------
 log "Configuring /etc/zsh/zshenv"
 ./setup-zshenv
 
 # ---------------------------------------------------------------------------
-# 8. Tmux Plugin Manager + plugins (tmux.conf expects it at the TPM default
+# 7. Tmux Plugin Manager + plugins (tmux.conf expects it at the TPM default
 #    path, ~/.tmux/plugins/tpm)
 # ---------------------------------------------------------------------------
 TPM_DIR="$HOME/.tmux/plugins/tpm"
@@ -232,7 +203,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 9. Optional: make zsh the login shell
+# 8. Optional: make zsh the login shell
 # ---------------------------------------------------------------------------
 if [ "${CHANGE_SHELL:-0}" = "1" ]; then
     log "Changing login shell to zsh"

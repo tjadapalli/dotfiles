@@ -8,7 +8,6 @@
 #   Prompt:       starship
 #   Navigation:   zoxide, fzf, fd
 #   CLI tools:    eza, bat, nvim, ripgrep
-#   Node:         nvm
 
 # =========================================================
 # History
@@ -109,11 +108,3 @@ source "$ZDOTDIR/prompt.zsh"
 
 # Custom
 # source "$ZDOTDIR/custom.zsh"
-
-# =========================================================
-# Node / NVM
-# =========================================================
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
