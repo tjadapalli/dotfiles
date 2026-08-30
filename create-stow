@@ -1,2 +1,2 @@
 #!/bin/sh
-stow -d .. -t ~ dotfiles
+stow --no-folding -d .. -t ~ dotfiles
