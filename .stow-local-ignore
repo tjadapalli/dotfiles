@@ -7,3 +7,5 @@ README\.md
 \.gitignore
 \.stow-local-ignore
 \.git
+AGENTS\.md
+\.nvim-version
