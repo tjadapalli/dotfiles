@@ -22,5 +22,9 @@ if [ -f "$TARGET" ] && grep -q 'ZDOTDIR="\$XDG_CONFIG_HOME/zsh"' "$TARGET"; then
     exit 0
 fi
 
-printf '%s\n' "$BLOCK" | sudo tee -a "$TARGET" > /dev/null
+if [ "$(id -u)" -eq 0 ]; then
+    printf '%s\n' "$BLOCK" >> "$TARGET"
+else
+    printf '%s\n' "$BLOCK" | sudo tee -a "$TARGET" > /dev/null
+fi
 echo "Appended XDG/ZDOTDIR block to $TARGET"

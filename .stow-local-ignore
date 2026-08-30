@@ -1,6 +1,8 @@
 create-stow
 remove-stow
 setup-zshenv
+bootstrap\.sh
+docker-test\.sh
 README\.md
 \.gitignore
 \.stow-local-ignore
