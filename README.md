@@ -1,6 +1,6 @@
 # dotfiles
 
-Managed with [GNU Stow](https://www.gnu.org/software/stow/).
+Config for zsh, tmux, and Neovim, managed with [GNU Stow](https://www.gnu.org/software/stow/) and kept in sync across Linux machines.
 
 ## Quick start (fresh Ubuntu server)
 
@@ -10,14 +10,10 @@ cd dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` does everything below in one shot: installs all dependencies
-(including `build-essential`, `python3-venv`/`python3-pip`, and Node — the
-packages Neovim's Mason needs to build/install LSPs and formatters, e.g. the
-`black` "python3 failed with exit code 1" error is caused by a missing
-`python3-venv`), symlinks the configs via stow, points zsh at
-`$XDG_CONFIG_HOME/zsh`, and installs the Tmux Plugin Manager plus its
-plugins. It's idempotent — safe to re-run any time (after pulling updates,
-for example).
+`bootstrap.sh` installs all dependencies, symlinks the configs via stow,
+points zsh at `$XDG_CONFIG_HOME/zsh`, installs the pinned Neovim build (see
+below), and sets up the Tmux Plugin Manager plus its plugins. It's
+idempotent — safe to re-run any time, e.g. after pulling updates.
 
 Set `CHANGE_SHELL=1` to also make zsh your login shell:
 
@@ -27,21 +23,16 @@ CHANGE_SHELL=1 ./bootstrap.sh
 
 ## Try it in a throwaway container
 
-To test the whole setup without touching your actual machine:
-
 ```
 ./docker-test.sh          # ubuntu:24.04
 ./docker-test.sh 22.04    # or another Ubuntu release
 ```
 
-This builds a disposable image, runs `bootstrap.sh` inside it during the
-build, and drops you straight into an interactive zsh shell with everything
-already configured. Exit the shell and the container (`--rm`) is gone —
-nothing persists between runs.
+Builds a disposable image, runs `bootstrap.sh` inside it, and drops you into
+an interactive zsh shell with everything configured. Exit and the container
+(`--rm`) is gone — nothing persists between runs.
 
 ## Manual install
-
-If you'd rather do it by hand instead of running `bootstrap.sh`:
 
 ```
 ./create-stow
@@ -51,15 +42,14 @@ Symlinks everything under `.config/` into `~/.config/`. Run `./remove-stow` to u
 
 ## zsh
 
-### Point zsh at the config directory
-
-zsh needs to know to look in `$XDG_CONFIG_HOME/zsh` instead of `$HOME` for its dotfiles. This requires a one-time edit to `/etc/zsh/zshenv` (needs sudo):
+zsh needs to know to look in `$XDG_CONFIG_HOME/zsh` instead of `$HOME` for
+its dotfiles. This requires a one-time edit to `/etc/zsh/zshenv` (needs sudo):
 
 ```
 ./setup-zshenv
 ```
 
-### Dependencies
+Dependencies:
 
 ```
 sudo apt install eza bat fd-find fzf ripgrep zoxide build-essential python3-venv python3-pip nodejs npm
@@ -73,14 +63,20 @@ ln -s $(which fdfind) ~/.local/bin/fd
 
 ## Neovim
 
-Ubuntu's packaged Neovim is often too old for modern plugins (treesitter,
-lazy.nvim expect a recent release). `bootstrap.sh` installs the latest
-stable build straight from GitHub releases; do it by hand with:
+This config targets a specific Neovim release, pinned in
+[`.nvim-version`](./.nvim-version) (currently **0.12.4**) — the single
+source of truth `bootstrap.sh` reads from. To upgrade, bump that file and
+re-run `bootstrap.sh`.
+
+`bootstrap.sh` downloads that exact version's tarball from GitHub releases
+and installs it under `~/.local/nvim`, symlinked to `~/.local/bin/nvim`. To
+do it by hand:
 
 ```
-curl -sSfL -o /tmp/nvim.tar.gz https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-sudo mkdir -p /opt/nvim && sudo tar -C /opt/nvim --strip-components=1 -xzf /tmp/nvim.tar.gz
-sudo ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim
+NVIM_VERSION=$(cat .nvim-version)
+curl -sSfL -o /tmp/nvim.tar.gz "https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim-linux-x86_64.tar.gz"
+mkdir -p ~/.local/nvim && tar -C ~/.local/nvim --strip-components=1 -xzf /tmp/nvim.tar.gz
+ln -sf ~/.local/nvim/bin/nvim ~/.local/bin/nvim
 ```
 
 ## Tmux Plugin Manager
