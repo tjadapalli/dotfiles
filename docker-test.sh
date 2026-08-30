@@ -23,6 +23,14 @@ echo "==> Building a throwaway dotfiles test image from ${IMAGE}"
 # The repo is copied into the image (not bind-mounted) so the container is
 # fully self-contained and stow can freely symlink from a stable in-image
 # path regardless of how the host directory is mounted.
+#
+# IMPORTANT: the repo must live one directory *below* $HOME (e.g.
+# ~/workspace/dotfiles), never directly at ~/dotfiles. create-stow runs
+# `stow -d .. -t ~`, so if the repo's parent directory and the stow target
+# were the same path, GNU Stow refuses to do anything (it silently prints
+# "skipping target which was current stow directory ." and exits 0 without
+# symlinking a single file) — which is exactly what a real checkout at
+# ~/workspace/git/.../dotfiles never triggers, so keep that nesting here too.
 docker build \
     --pull \
     -f - \
@@ -32,7 +40,7 @@ FROM ${IMAGE}
 RUN apt-get update && apt-get install -y --no-install-recommends sudo && rm -rf /var/lib/apt/lists/*
 RUN useradd -m -s /bin/bash tester && echo "tester ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/tester
 USER tester
-WORKDIR /home/tester/dotfiles
+WORKDIR /home/tester/workspace/dotfiles
 COPY --chown=tester:tester . .
 RUN ./bootstrap.sh
 WORKDIR /home/tester

@@ -176,7 +176,26 @@ fi
 # 6. Stow the dotfiles themselves
 # ---------------------------------------------------------------------------
 log "Stowing dotfiles (--no-folding)"
+# GNU Stow silently no-ops (exit 0, "skipping target which was current stow
+# directory .") if this repo's parent directory is $HOME itself — i.e. if
+# this checkout lives directly at ~/dotfiles rather than nested a level
+# deeper (~/workspace/dotfiles, ~/git/dotfiles, etc). create-stow's
+# `stow -d .. -t ~` needs that nesting, so fail loudly instead of silently
+# doing nothing.
+if [ "$(cd .. && pwd)" = "$HOME" ]; then
+    echo "error: this checkout is directly under \$HOME ($SCRIPT_DIR)." >&2
+    echo "       'stow -d .. -t ~' requires the repo to be nested one level" >&2
+    echo "       deeper than \$HOME (e.g. ~/workspace/dotfiles), otherwise Stow" >&2
+    echo "       treats the stow dir and the target as the same path and" >&2
+    echo "       silently symlinks nothing. Move the clone and re-run." >&2
+    exit 1
+fi
 ./create-stow
+if [ ! -e "$HOME/.config/nvim/init.lua" ] && [ -e "$SCRIPT_DIR/.config/nvim/init.lua" ]; then
+    echo "error: stow reported success but ~/.config/nvim/init.lua wasn't linked." >&2
+    echo "       Run './create-stow' manually and check its output for warnings." >&2
+    exit 1
+fi
 
 # ---------------------------------------------------------------------------
 # 7. Point zsh at $XDG_CONFIG_HOME/zsh
