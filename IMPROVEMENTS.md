@@ -14,3 +14,7 @@ Running list of stuff that could make these dotfiles better. Not urgent, just th
 - **indent-blankline** — visual indent guides, helps with deeply nested C.
 - **auto-session** — already a TODO comment in lazy.lua, still worth doing.
 - **mini.files** — tried it, but it opens as a floating window that doesn't get out of the way, so other floats (telescope) can render behind it. Needs a real fix (probably closing it on WinLeave) instead of patching individual keymaps one at a time.
+
+## tmux
+
+- **[Watch later](https://www.youtube.com/watch?v=DzNmUNvnB04)** — video to review for possible tmux config improvements.
