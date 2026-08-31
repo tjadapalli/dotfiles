@@ -2,7 +2,7 @@
 
 add_newline = false
 
-format = "$directory$git_branch$git_status$nodejs$rust$golang$php $character"
+format = "${env_var.MACHINE_LABEL}$directory$git_branch$git_status$nodejs$rust$golang$php $character"
 
 [os]
 disabled = false
@@ -55,3 +55,8 @@ format = "[$symbol $version](purple) "
 success_symbol = "[❯](green)"
 error_symbol   = "[❯](red)"
 vimcmd_symbol  = "[❮](blue)"
+
+[env_var.MACHINE_LABEL]
+variable = "MACHINE_LABEL"
+default = "default"
+format = "[$env_value](bold yellow) "
