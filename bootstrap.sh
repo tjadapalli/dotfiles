@@ -57,11 +57,8 @@ $SUDO apt-get install -y --no-install-recommends \
     fzf \
     ripgrep \
     universal-ctags \
-    xclip
-
-# zoxide is packaged in Ubuntu 22.04+ (universe); prefer it over the upstream
-# install script, which has a history of misdetecting libc inside containers.
-$SUDO apt-get install -y zoxide || true
+    xclip \
+    zoxide
 
 # ---------------------------------------------------------------------------
 # 2. Ubuntu names bat/fd differently — symlink so configs that call
@@ -78,13 +75,8 @@ fi
 export PATH="$HOME/.local/bin:$PATH"
 
 # ---------------------------------------------------------------------------
-# 3. zoxide (apt fallback for older Ubuntu without the package) + starship
+# 3. starship
 # ---------------------------------------------------------------------------
-if ! command -v zoxide >/dev/null 2>&1; then
-    log "apt didn't provide zoxide (older Ubuntu?), installing from upstream script"
-    curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
-fi
-
 # starship isn't packaged for Ubuntu; the upstream install script also does
 # its own libc/arch detection which can misfire in some containers, so pull
 # the prebuilt binary straight from the GitHub release instead.
