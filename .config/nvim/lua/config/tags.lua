@@ -38,5 +38,41 @@ local function generate_tags()
 	)
 end
 
+local function append_tags()
+	if vim.fn.executable("ctags") == 0 then
+		vim.notify("ctags not found on PATH", vim.log.levels.ERROR)
+		return
+	end
+
+	local file = vim.fn.expand("%:p")
+	if file == "" then
+		vim.notify("no file in current buffer", vim.log.levels.ERROR)
+		return
+	end
+
+	local tags_file = project_root() .. "/tags"
+	if vim.fn.filereadable(tags_file) == 0 then
+		vim.notify("no tags file at " .. tags_file .. " yet; run :GenerateTags first", vim.log.levels.ERROR)
+		return
+	end
+
+	vim.system(
+		{ "ctags", "--append=yes", "-f", tags_file, file },
+		{ text = true },
+		function(res)
+			vim.schedule(function()
+				if res.code == 0 then
+					vim.notify("tags updated for " .. file)
+				else
+					vim.notify("ctags append failed: " .. (res.stderr or ""), vim.log.levels.ERROR)
+				end
+			end)
+		end
+	)
+end
+
 vim.api.nvim_create_user_command("GenerateTags", generate_tags, {})
 vim.keymap.set("n", "<leader>ct", generate_tags, { desc = "Generate ctags for project" })
+
+vim.api.nvim_create_user_command("AppendTags", append_tags, {})
+vim.keymap.set("n", "<leader>cu", append_tags, { desc = "Append ctags for current file" })
