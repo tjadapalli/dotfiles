@@ -2,7 +2,7 @@
 
 add_newline = false
 
-format = "${env_var.MACHINE_LABEL}$directory$git_branch$git_status$nodejs$rust$golang$php $character"
+format = "${custom.machine_label}$directory$git_branch$git_status$nodejs$rust$golang$php $character"
 
 [os]
 disabled = false
@@ -56,7 +56,7 @@ success_symbol = "[❯](green)"
 error_symbol   = "[❯](red)"
 vimcmd_symbol  = "[❮](blue)"
 
-[env_var.MACHINE_LABEL]
-variable = "MACHINE_LABEL"
-default = "default"
-format = "[$env_value](bold yellow) "
+[custom.machine_label]
+command = "cat ~/.config/machine-label 2>/dev/null || echo default"
+when = true
+format = "[$output](bold yellow) "
