@@ -6,3 +6,4 @@ require('config.unmap')
 require('config.lazy')
 -- LSP
 require('config.lsp')
+require('config.spell')
