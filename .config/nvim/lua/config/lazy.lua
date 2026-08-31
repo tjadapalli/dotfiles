@@ -58,6 +58,7 @@ require("lazy").setup({
 		"neovim/nvim-lspconfig",
 		---------
 		{ 'nvim-mini/mini.nvim', version = '*' },
+		{ 'folke/which-key.nvim', event = 'VeryLazy', opts = {} },
 		{
 			'saghen/blink.cmp',
 			dependencies = { 'rafamadriz/friendly-snippets' },
