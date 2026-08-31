@@ -56,6 +56,7 @@ $SUDO apt-get install -y --no-install-recommends \
     fd-find \
     fzf \
     ripgrep \
+    universal-ctags \
     xclip
 
 # zoxide is packaged in Ubuntu 22.04+ (universe); prefer it over the upstream

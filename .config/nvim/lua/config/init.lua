@@ -1,5 +1,6 @@
 require('config.set')
 require('config.remap')
+require('config.tags')
 require('config.unmap')
 -- Package manager
 require('config.lazy')
