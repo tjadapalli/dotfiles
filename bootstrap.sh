@@ -37,10 +37,9 @@ export DEBIAN_FRONTEND=noninteractive
 log "Updating apt and installing system packages"
 $SUDO apt-get update -y
 
-# build-essential + python3-venv/pip are what Mason needs to build/install
-# LSPs and formatters (e.g. the "black" install failure: python3 -m venv
-# fails without python3-venv on Debian/Ubuntu) and what nvim-treesitter needs
-# to compile parsers. xclip backs tmux-yank's system-clipboard integration.
+# python3-venv is needed for Mason's pip-based installs; unzip for its
+# .zip-packaged ones (e.g. clangd); xclip backs tmux-yank.
+# Keep this list in sync with README.md's "Dependencies" manual-install line.
 $SUDO apt-get install -y --no-install-recommends \
     build-essential \
     git \
@@ -58,6 +57,7 @@ $SUDO apt-get install -y --no-install-recommends \
     ripgrep \
     universal-ctags \
     xclip \
+    unzip \
     zoxide
 
 # ---------------------------------------------------------------------------

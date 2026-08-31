@@ -52,7 +52,7 @@ its dotfiles. This requires a one-time edit to `/etc/zsh/zshenv` (needs sudo):
 Dependencies:
 
 ```
-sudo apt install eza bat fd-find fzf ripgrep universal-ctags zoxide build-essential python3-venv python3-pip nodejs npm
+sudo apt install build-essential git curl stow zsh tmux python3 python3-venv python3-pip eza bat fd-find fzf ripgrep universal-ctags xclip unzip zoxide
 # starship isn't packaged for Ubuntu — grab the release binary directly
 curl -sSfL -o /tmp/starship.tar.gz https://github.com/starship/starship/releases/latest/download/starship-x86_64-unknown-linux-gnu.tar.gz
 tar -C /tmp -xzf /tmp/starship.tar.gz && install -m755 /tmp/starship ~/.local/bin/starship
