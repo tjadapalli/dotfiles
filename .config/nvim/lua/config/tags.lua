@@ -18,9 +18,14 @@ local function generate_tags()
 		return
 	end
 
+	vim.notify("generating tags in " .. root .. " (large trees can take a while)...")
+
+	-- detach: keep the ctags process alive even if this Neovim instance
+	-- exits before it finishes, so large trees don't end up with a
+	-- half-written tags file.
 	vim.system(
 		{ "ctags", "-R", "--exclude=.git", "-f", tags_file, root },
-		{ text = true },
+		{ text = true, detach = true },
 		function(res)
 			vim.schedule(function()
 				if res.code == 0 then
