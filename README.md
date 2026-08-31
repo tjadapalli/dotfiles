@@ -21,6 +21,14 @@ Set `CHANGE_SHELL=1` to also make zsh your login shell:
 CHANGE_SHELL=1 ./bootstrap.sh
 ```
 
+## Fonts
+
+This setup relies on icon glyphs (in the Starship prompt, `eza`, `lf`, and
+Neovim's UI) that only render with a [Nerd Font](https://www.nerdfonts.com/).
+Install one (e.g. `MesloLGS Nerd Font` or `FiraCode Nerd Font`) and set it as
+your terminal's font — otherwise you'll see boxes or missing characters
+instead of icons.
+
 ## Try it in a throwaway container
 
 ```
