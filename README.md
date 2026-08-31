@@ -90,3 +90,12 @@ in `tmux.conf`, or run it headless the way `bootstrap.sh` does: start a
 detached tmux session (so `tmux.conf`'s `run '~/.tmux/plugins/tpm/tpm'` line
 actually gets sourced and sets up `TMUX_PLUGIN_MANAGER_PATH`), then run
 `~/.tmux/plugins/tpm/bin/install_plugins` inside it.
+
+## Git global settings
+
+(TODO: migrate this into a tracked `.gitconfig`)
+
+```
+git config --global core.fsmonitor true
+git config --global core.untrackedCache true
+```
