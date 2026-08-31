@@ -2,3 +2,4 @@
 /.config/zsh/plugins
 /.config/tmux/plugins
 tags
+.claude
