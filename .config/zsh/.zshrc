@@ -106,5 +106,7 @@ source "$ZDOTDIR/plugins.zsh"
 # Prompt/theme
 source "$ZDOTDIR/prompt.zsh"
 
-# Custom
-# source "$ZDOTDIR/custom.zsh"
+# Machine-local overrides (stowed separately per machine; not tracked here)
+if [[ -f "$ZDOTDIR/local.zsh" ]]; then
+  source "$ZDOTDIR/local.zsh"
+fi
