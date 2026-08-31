@@ -15,3 +15,9 @@
 - README.md is setup-only (install, dependencies, how to run things).
   Don't document individual features, keymaps, or commands there —
   that belongs in commit messages/code, not the README.
+- Every commit/feature that needs something beyond `git pull` to take
+  effect on an already-bootstrapped machine (a new package, a symlink,
+  a one-time command) must ship with the manual steps to apply it —
+  re-running the full `bootstrap.sh` on every change is too heavy.
+  Still keep `bootstrap.sh` itself updated in the same commit, so a
+  fresh machine stays fully covered by it.
