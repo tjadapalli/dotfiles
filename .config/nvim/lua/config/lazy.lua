@@ -58,6 +58,15 @@ require("lazy").setup({
 		"neovim/nvim-lspconfig",
 		---------
 		{ 'nvim-mini/mini.nvim', version = '*' },
+		{
+			"MeanderingProgrammer/render-markdown.nvim",
+			dependencies = { "nvim-treesitter/nvim-treesitter" },
+			ft = { "markdown" },
+			opts = {
+				-- Start disabled; toggled on demand with <leader>md (see after/plugin/render-markdown.lua)
+				enabled = false,
+			},
+		},
 		{ 'folke/which-key.nvim', event = 'VeryLazy', opts = {} },
 		{
 			'saghen/blink.cmp',
