@@ -102,7 +102,35 @@ fi
 export PATH="$HOME/.local/bin:$PATH"
 
 # ---------------------------------------------------------------------------
-# 4. Neovim — Ubuntu's apt package is often too old for modern plugins
+# 4. tree-sitter CLI — required by nvim-treesitter's `main` branch, which
+#    compiles every parser locally via `tree-sitter build` (no more prebuilt
+#    .so downloads like the old `master` branch had). Needs 0.26.1+; Ubuntu's
+#    apt package is stuck at 0.20.8, so grab a prebuilt binary from GitHub
+#    instead, same approach as starship above.
+# ---------------------------------------------------------------------------
+if ! command -v tree-sitter >/dev/null 2>&1; then
+    log "Installing tree-sitter CLI"
+    arch="$(uname -m)"
+    case "$arch" in
+        x86_64) ts_asset="tree-sitter-linux-x64.gz" ;;
+        aarch64|arm64) ts_asset="tree-sitter-linux-arm64.gz" ;;
+        *) ts_asset="" ;;
+    esac
+    if [ -n "$ts_asset" ]; then
+        tmpdir="$(mktemp -d)"
+        curl -sSfL -o "$tmpdir/tree-sitter.gz" \
+            "https://github.com/tree-sitter/tree-sitter/releases/latest/download/${ts_asset}"
+        gunzip -c "$tmpdir/tree-sitter.gz" > "$HOME/.local/bin/tree-sitter"
+        chmod +x "$HOME/.local/bin/tree-sitter"
+        rm -rf "$tmpdir"
+    else
+        warn "Unsupported arch '$arch' for tree-sitter CLI, skipping (nvim-treesitter parser installs will fail)"
+    fi
+fi
+export PATH="$HOME/.local/bin:$PATH"
+
+# ---------------------------------------------------------------------------
+# 5. Neovim — Ubuntu's apt package is often too old for modern plugins
 #    (treesitter/lazy.nvim expect a recent release), so grab a pinned
 #    stable prebuilt binary from GitHub instead. The version this config
 #    targets lives in .nvim-version (single source of truth — bump that
@@ -136,7 +164,7 @@ install_neovim() {
 install_neovim
 
 # ---------------------------------------------------------------------------
-# 5. Stow the dotfiles themselves
+# 6. Stow the dotfiles themselves
 # ---------------------------------------------------------------------------
 log "Stowing dotfiles (--no-folding)"
 # GNU Stow silently no-ops (exit 0, "skipping target which was current stow
@@ -161,13 +189,13 @@ if [ ! -e "$HOME/.config/nvim/init.lua" ] && [ -e "$SCRIPT_DIR/.config/nvim/init
 fi
 
 # ---------------------------------------------------------------------------
-# 6. Point zsh at $XDG_CONFIG_HOME/zsh
+# 7. Point zsh at $XDG_CONFIG_HOME/zsh
 # ---------------------------------------------------------------------------
 log "Configuring /etc/zsh/zshenv"
 ./setup-zshenv
 
 # ---------------------------------------------------------------------------
-# 7. Tmux Plugin Manager + plugins (tmux.conf expects it at the TPM default
+# 8. Tmux Plugin Manager + plugins (tmux.conf expects it at the TPM default
 #    path, ~/.tmux/plugins/tpm)
 # ---------------------------------------------------------------------------
 TPM_DIR="$HOME/.tmux/plugins/tpm"
@@ -196,7 +224,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 8. Optional: make zsh the login shell
+# 9. Optional: make zsh the login shell
 # ---------------------------------------------------------------------------
 if [ "${CHANGE_SHELL:-0}" = "1" ]; then
     log "Changing login shell to zsh"

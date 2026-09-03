@@ -87,6 +87,17 @@ mkdir -p ~/.local/nvim && tar -C ~/.local/nvim --strip-components=1 -xzf /tmp/nv
 ln -sf ~/.local/nvim/bin/nvim ~/.local/bin/nvim
 ```
 
+nvim-treesitter tracks the [`main` branch](https://github.com/nvim-treesitter/nvim-treesitter)
+(the plugin's current, actively-maintained rewrite — see `after/plugin/treesitter.lua`),
+which compiles every parser locally and needs `tree-sitter` CLI 0.26.1+ in
+your `PATH`. Ubuntu's apt package is too old (0.20.8), so grab the release
+binary directly, same idea as starship above:
+
+```
+curl -sSfL -o /tmp/tree-sitter.gz https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-linux-x64.gz
+gunzip -c /tmp/tree-sitter.gz > ~/.local/bin/tree-sitter && chmod +x ~/.local/bin/tree-sitter
+```
+
 ## Tmux Plugin Manager
 
 ```
